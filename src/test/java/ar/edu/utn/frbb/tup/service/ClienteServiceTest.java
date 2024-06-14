@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
@@ -125,7 +124,98 @@ public class ClienteServiceTest {
 
     }
 
-    //Agregar una CA$ y CC$ --> success 2 cuentas, titular peperino
-    //Agregar una CA$ y CAU$S --> success 2 cuentas, titular peperino...
-    //Testear clienteService.buscarPorDni
+    // test punto 1 
+
+    //Agregar una CA$ y CC$ 
+    @Test
+    public void testAgregarCACC() throws TipoCuentaAlreadyExistsException {
+        Cliente agustin = new Cliente();
+        agustin.setDni(45460664);
+        agustin.setNombre("Agustin");
+        agustin.setApellido("Alvarez");
+        agustin.setFechaNacimiento(LocalDate.of(2004, 1,12));
+        agustin.setTipoPersona(TipoPersona.PERSONA_FISICA);
+
+        Cuenta cuentaCA = new Cuenta()
+            .setMoneda(TipoMoneda.PESOS)
+            .setBalance(350000)
+            .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
+
+
+        Cuenta cuentaCC = new Cuenta()
+            .setMoneda(TipoMoneda.PESOS)
+            .setBalance(350000)
+            .setTipoCuenta(TipoCuenta.CUENTA_CORRIENTE);
+
+
+        when(clienteDao.find(45460664, true)).thenReturn(agustin);
+
+        clienteService.agregarCuenta(cuentaCC, agustin.getDni());
+        clienteService.agregarCuenta(cuentaCA, agustin.getDni());
+
+        verify(clienteDao, times(2)).save(agustin);
+        assertEquals(2, agustin.getCuentas().size());
+        assertEquals(agustin, cuentaCA.getTitular());
+        assertEquals(agustin, cuentaCC.getTitular()); 
+        assertFalse(true, "Fail on purpose");
+    }
+
+    //Agregar una CA$ y CAU$S 
+    @Test
+    public void testAgregarCACAU() throws TipoCuentaAlreadyExistsException{
+
+        Cliente agustin = new Cliente();
+        agustin.setDni(26456439);
+        agustin.setNombre("Agustin");
+        agustin.setApellido("Alvarez");
+        agustin.setFechaNacimiento(LocalDate.of(1978, 3, 25));
+        agustin.setTipoPersona(TipoPersona.PERSONA_FISICA);
+
+        Cuenta cuentaCajaAhorro = new Cuenta()
+                .setMoneda(TipoMoneda.PESOS)
+                .setBalance(500000)
+                .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
+
+        Cuenta cuentaCajaAhorroUS = new Cuenta()
+                .setMoneda(TipoMoneda.DOLARES)
+                .setBalance(12000)
+                .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
+
+        when(clienteDao.find(26456439, true)).thenReturn(agustin);
+
+        clienteService.agregarCuenta(cuentaCajaAhorro, agustin.getDni());
+        clienteService.agregarCuenta(cuentaCajaAhorroUS, agustin.getDni());
+
+        verify(clienteDao, times(2)).save(agustin);
+        assertEquals(2, agustin.getCuentas().size());
+        assertTrue(agustin.getCuentas().contains(cuentaCajaAhorro));
+        assertTrue(agustin.getCuentas().contains(cuentaCajaAhorroUS));
+        assertEquals(agustin, cuentaCajaAhorro.getTitular());
+        assertEquals(agustin, cuentaCajaAhorroUS.getTitular());
+    }
+
+    //Testear el método buscarPorDni (cómo mínimo son dos casos de test: casos de éxito y de falla)    
+    @Test
+    public void testBuscarPorDni(){
+        Cliente agustin = new Cliente();
+        agustin.setDni(45460664);
+        agustin.setNombre("Agustin");
+        agustin.setApellido("Alvarez");
+        agustin.setFechaNacimiento(LocalDate.of(2004, 1, 12));
+        agustin.setTipoPersona(TipoPersona.PERSONA_FISICA);
+
+        when(clienteDao.find(26456439,true)).thenReturn(agustin);
+
+        Cliente clienteEncontrado = clienteService.buscarClientePorDni(45460664);
+
+        assertEquals(agustin, clienteEncontrado);
+    }
+
+    @Test
+    public void testBuscarPorDniCasoFalla(){
+
+        when(clienteDao.find(45460664,false)).thenReturn(null);
+        assertThrows(IllegalArgumentException.class, () -> clienteService.buscarClientePorDni(45460664));
+    } 
+
 }
