@@ -71,7 +71,7 @@ public class ClienteServiceTest {
     @Test
     public void testAgregarCuentaAClienteSuccess() throws TipoCuentaAlreadyExistsException {
         Cliente pepeRino = new Cliente();
-        pepeRino.setDni(26456439);
+        pepeRino.setDni(45460664);
         pepeRino.setNombre("Pepe");
         pepeRino.setApellido("Rino");
         pepeRino.setFechaNacimiento(LocalDate.of(1978, 3,25));
@@ -82,7 +82,7 @@ public class ClienteServiceTest {
                 .setBalance(500000)
                 .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
 
-        when(clienteDao.find(26456439, true)).thenReturn(pepeRino);
+        when(clienteDao.find(45460664, true)).thenReturn(pepeRino);
 
         clienteService.agregarCuenta(cuenta, pepeRino.getDni());
 
@@ -97,7 +97,7 @@ public class ClienteServiceTest {
     @Test
     public void testAgregarCuentaAClienteDuplicada() throws TipoCuentaAlreadyExistsException {
         Cliente luciano = new Cliente();
-        luciano.setDni(26456439);
+        luciano.setDni(45460664);
         luciano.setNombre("Pepe");
         luciano.setApellido("Rino");
         luciano.setFechaNacimiento(LocalDate.of(1978, 3,25));
@@ -108,7 +108,7 @@ public class ClienteServiceTest {
                 .setBalance(500000)
                 .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
 
-        when(clienteDao.find(26456439, true)).thenReturn(luciano);
+        when(clienteDao.find(45460664, true)).thenReturn(luciano);
 
         clienteService.agregarCuenta(cuenta, luciano.getDni());
 
@@ -165,10 +165,10 @@ public class ClienteServiceTest {
     public void testAgregarCACAU() throws TipoCuentaAlreadyExistsException{
 
         Cliente agustin = new Cliente();
-        agustin.setDni(26456439);
+        agustin.setDni(45460664);
         agustin.setNombre("Agustin");
         agustin.setApellido("Alvarez");
-        agustin.setFechaNacimiento(LocalDate.of(1978, 3, 25));
+        agustin.setFechaNacimiento(LocalDate.of(2004, 1, 12));
         agustin.setTipoPersona(TipoPersona.PERSONA_FISICA);
 
         Cuenta cuentaCajaAhorro = new Cuenta()
@@ -181,7 +181,7 @@ public class ClienteServiceTest {
                 .setBalance(12000)
                 .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
 
-        when(clienteDao.find(26456439, true)).thenReturn(agustin);
+        when(clienteDao.find(45460664, true)).thenReturn(agustin);
 
         clienteService.agregarCuenta(cuentaCajaAhorro, agustin.getDni());
         clienteService.agregarCuenta(cuentaCajaAhorroUS, agustin.getDni());
@@ -204,7 +204,7 @@ public class ClienteServiceTest {
         agustin.setFechaNacimiento(LocalDate.of(2004, 1, 12));
         agustin.setTipoPersona(TipoPersona.PERSONA_FISICA);
 
-        when(clienteDao.find(26456439,true)).thenReturn(agustin);
+        when(clienteDao.find(45460664,true)).thenReturn(agustin);
 
         Cliente clienteEncontrado = clienteService.buscarClientePorDni(45460664);
 
